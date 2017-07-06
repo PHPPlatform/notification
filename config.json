@@ -1,0 +1,8 @@
+{
+    "email":{
+        "class":"PhpPlatform\\Notification\\Implementation\\PHPMail"
+    },
+    "sms":{
+        "class":null
+    }
+}
