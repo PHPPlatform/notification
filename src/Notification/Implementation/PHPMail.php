@@ -24,10 +24,10 @@ class PHPMail implements Email {
 	
 	public function addAddress($address, $type = null) {
 		switch ($type){
-			case self::CC : 
+			case self::CC :
 				$this->cc[] = $address;
 				break;
-			case self::BCC : 
+			case self::BCC :
 				$this->bcc[] = $address;
 				break;
 			default:
@@ -46,11 +46,30 @@ class PHPMail implements Email {
 	}
 	
 	public function send() {
-		$to = implode(", ", $this->to);
+		return mail($this->getTo(),$this->getSubject(),$this->getMessage(),$this->getHeaders());
+	}
+	
+	protected function getTo(){
+		return implode(", ", $this->to);
+	}
+	
+	protected function getSubject(){
+		return $this->subject;
+	}
+	
+	protected function getMessage(){
+		return $this->message;
+	}
+	
+	protected function getHeaders(){
 		$cc = implode(", ", $this->cc);
 		$bcc = implode(", ", $this->cc);
 		
-		$headers = array_map(function($name,$value){return $name.": ".$value;},$this->headers);
+		$headers = array();
+		foreach ($this->headers as $name=>$value){
+			$headers[] = "$name: $value";
+		}
+		
 		if(trim($cc) !== ""){
 			$headers[] = "Cc: $cc";
 		}
@@ -58,8 +77,6 @@ class PHPMail implements Email {
 			$headers[] = "Bcc: $bcc";
 		}
 		
-		$header = implode("\r\n", $headers);
-		
-		return mail($to,$this->subject,$this->message,$header);
+		return implode("\r\n", $headers);
 	}
 }
